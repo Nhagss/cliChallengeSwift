@@ -63,14 +63,60 @@ struct Calculator: ParsableCommand {
             //Fazendo a randomização do Array
             var hobbiesArrayShuffled = hobbiesArray
             hobbiesArrayShuffled.shuffle()
-            print(week.map { $0 + "\t" }.joined())
-            print(hobbiesArrayShuffled.map { $0 + "\t" }.joined())
+            for i in 0..<week.count {
+                print("\(week[i]): \(hobbiesArrayShuffled[i])")
+            }
         }
     }
     
     struct AddMultiple: ParsableCommand {
-        @Option(name: [.customLong("hobbies"), .customShort("h")], help: "Lista de Hobbies separados por virgula ','")
-        var hobbiesString: String = "a"
+        @Option(name: [.customLong("hobbies"), .customShort("h")], help: "Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por vircula u.e. <hobby1>, <quant1>, <hobby2>, <quant2>")
+        var hobbiesString: String = ""
+        
+        func separateItems(data: String) -> (strings: [String], numbers: [Int]) {
+            var hobbies: [String] = []
+            var quants: [Int] = []
+            let termArray = data.split(separator: ",")
+            
+            for (i, term) in termArray.enumerated() {
+                if i%2 == 0 {
+                    hobbies.append(String(term))
+                } else {
+                    if let quantity = Int(term) {
+                        quants.append(quantity)
+                    } else {
+                        print("Invalido, use <hobby> <quant> <hobby> <quant> ...")
+                    }
+                }
+            }
+            
+            return(strings: hobbies, numbers: quants)
+        }
+        
+        func run() {
+            let (hobbieList, quants) = separateItems(data: hobbiesString)
+            struct day{
+                var nome: String
+                var numero: Int
+                var hobQuant: Int
+                
+            }
+            
+            struct week{
+                var hobbies: [String]
+                let dias = [day(nome: "domingo", numero: 0, hobQuant: 0),
+                            day(nome: "segunda", numero: 1, hobQuant: 0),
+                            day(nome: "terca", numero: 2, hobQuant: 0),
+                            day(nome: "quarta", numero: 3, hobQuant: 0),
+                            day(nome: "quinta", numero: 4, hobQuant: 0),
+                            day(nome: "sexta", numero: 5, hobQuant: 0),
+                            day(nome: "sabado", numero: 6, hobQuant: 0)
+                            ]
+            }
+            let week1 = week(hobbies: hobbieList)
+            
+            
+        }
         
     }
 }

@@ -55,6 +55,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "add-multiple --hobbies  &quot;correr,1,andar,2&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--help"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -67,8 +71,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "add --hobbies &quot;a, b, c, d, e, f, g"
-            isEnabled = "YES">
+            argument = "add --hobbies &quot;a, b, c, d, e, f, g&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "add --hobbies &quot;correr, nadar, musica, desenhar, ler, escrever, programar&quot;"
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
