@@ -70,7 +70,7 @@ struct Calculator: ParsableCommand {
     
     struct AddMultiple: ParsableCommand {
         @Option(name: [.customLong("hobbies"), .customShort("h")], help: "Lista de Hobbies separados por virgula ','")
-        var hobbiesString: String = ""
+        var hobbiesString: String = "a"
         
     }
 }
