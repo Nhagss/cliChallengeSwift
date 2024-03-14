@@ -55,15 +55,15 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "add-multiple --hobbies  &quot;correr,1,andar,2&quot;"
+            argument = "add-multiple -h  &quot;correr,1,andar,2&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "add-multiple -h"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--help"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "add 1 2"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
