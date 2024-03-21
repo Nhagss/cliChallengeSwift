@@ -58,7 +58,7 @@ struct Calculator: ParsableCommand {
             let hobbiesArray = hobbiesString.components(separatedBy: ",")
             
             //Criando semana
-            let week = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
+            let week = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábad"]
             
             //Fazendo a randomização do Array
             var hobbiesArrayShuffled = hobbiesArray
