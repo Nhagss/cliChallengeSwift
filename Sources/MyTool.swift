@@ -40,8 +40,20 @@ import Foundation
 
 @main
 struct Hobgen: ParsableCommand {
-    
-    static var configuration = CommandConfiguration(subcommands: [Add.self, AddMultiple.self])
+    static var configuration = CommandConfiguration(
+        commandName: "Hobgen",
+        abstract: """
+
+██   ██  ██████  ██████  ██████  ██    ██  ██████  ███████ ███    ██
+██   ██ ██    ██ ██   ██ ██   ██  ██  ██  ██       ██      ████   ██
+███████ ██    ██ ██████  ██████    ████   ██   ███ █████   ██ ██  ██
+██   ██ ██    ██ ██   ██ ██   ██    ██    ██    ██ ██      ██  ██ ██
+██   ██  ██████  ██████  ██████     ██     ██████  ███████ ██   ████
+                                                                                                                                        
+This tool is designed to sort a list of hobbies and generate a weekly schedule in a random order each time. We planned this project to be accessible for terminal and no-terminal users. When running the program. First time, the userwill enter a list of hobbies and the amount of times each hobby will be able to be executed in a week. After the first time, the user has to select between adding a new list entirely or sorting the current list
+""",
+    subcommands: [Add.self, AddMultiple.self]
+    )
     
     mutating func run() throws {
         
@@ -92,7 +104,7 @@ struct Hobgen: ParsableCommand {
     }
     
     struct AddMultiple: ParsableCommand {
-        @Option(name: [.customLong("hobbies"), .customShort("h")], help: "Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por vircula u.e. <hobby1>,<quant1>,<hobby2>,<quant2>")
+        @Option(name: [.customLong("add"), .customShort("a")], help: "Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por vircula u.e. '<hobby1>,<quant1>,<hobby2>,<quant2>'")
         var hobbiesString: String = ""
         
         //função responsável por separar uma string com inteiros e textos e transformar em um array de inteiros e um de Strings
