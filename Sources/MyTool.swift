@@ -7,7 +7,6 @@
 import ArgumentParser
 import Foundation
 
-
 //@main
 //struct MyTool: ParsableCommand {
 //    
@@ -40,12 +39,35 @@ import Foundation
 //}
 
 @main
-struct Calculator: ParsableCommand {
+struct Hobgen: ParsableCommand {
     
     static var configuration = CommandConfiguration(subcommands: [Add.self, AddMultiple.self])
     
     mutating func run() throws {
         
+    }
+    
+    struct hobby {
+        let nomeHobby: String
+        let freqHobby: Int
+    }
+    struct day {
+        var nome: String
+        var hobQuant: Int
+        
+    }
+    
+    struct week {
+        var hobbies: [String]
+        let dias = [
+            day(nome: "domingo", hobQuant: 0),
+            day(nome: "segunda", hobQuant: 0),
+            day(nome: "terca", hobQuant: 0),
+            day(nome: "quarta", hobQuant: 0),
+            day(nome: "quinta", hobQuant: 0),
+            day(nome: "sexta", hobQuant: 0),
+            day(nome: "sabado", hobQuant: 0)
+        ]
     }
     
     struct Add: ParsableCommand {
@@ -58,7 +80,7 @@ struct Calculator: ParsableCommand {
             let hobbiesArray = hobbiesString.components(separatedBy: ",")
             
             //Criando semana
-            let week = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábad"]
+            let week = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
             
             //Fazendo a randomização do Array
             var hobbiesArrayShuffled = hobbiesArray
@@ -70,14 +92,16 @@ struct Calculator: ParsableCommand {
     }
     
     struct AddMultiple: ParsableCommand {
-        @Option(name: [.customLong("hobbies"), .customShort("h")], help: "Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por vircula u.e. <hobby1>, <quant1>, <hobby2>, <quant2>")
+        @Option(name: [.customLong("hobbies"), .customShort("h")], help: "Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por vircula u.e. <hobby1>,<quant1>,<hobby2>,<quant2>")
         var hobbiesString: String = ""
         
+        //função responsável por separar uma string com inteiros e textos e transformar em um array de inteiros e um de Strings
         func separateItems(data: String) -> (strings: [String], numbers: [Int]) {
             var hobbies: [String] = []
             var quants: [Int] = []
-            let termArray = data.split(separator: ",")
-            
+            //"correr,1,andar,2"
+            let termArray = data.split(separator: ",") //"correr","1","andar",2"
+                        
             for (i, term) in termArray.enumerated() {
                 if i%2 == 0 {
                     hobbies.append(String(term))
@@ -85,7 +109,7 @@ struct Calculator: ParsableCommand {
                     if let quantity = Int(term) {
                         quants.append(quantity)
                     } else {
-                        print("Invalido, use <hobby> <quant> <hobby> <quant> ...")
+                        print("Invalido, use <hobby>,<quant>,<hobby>,<quant> ...")
                     }
                 }
             }
@@ -95,26 +119,7 @@ struct Calculator: ParsableCommand {
         
         func run() {
             let (hobbieList, quants) = separateItems(data: hobbiesString)
-            struct day{
-                var nome: String
-                var numero: Int
-                var hobQuant: Int
-                
-            }
-            
-            struct week{
-                var hobbies: [String]
-                let dias = [day(nome: "domingo", numero: 0, hobQuant: 0),
-                            day(nome: "segunda", numero: 1, hobQuant: 0),
-                            day(nome: "terca", numero: 2, hobQuant: 0),
-                            day(nome: "quarta", numero: 3, hobQuant: 0),
-                            day(nome: "quinta", numero: 4, hobQuant: 0),
-                            day(nome: "sexta", numero: 5, hobQuant: 0),
-                            day(nome: "sabado", numero: 6, hobQuant: 0)
-                            ]
-            }
             let week1 = week(hobbies: hobbieList)
-            
             
         }
         
