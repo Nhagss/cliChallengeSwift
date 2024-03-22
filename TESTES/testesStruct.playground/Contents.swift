@@ -1,114 +1,101 @@
-import UIKit
+import Foundation
 
-//definição de estruturas
+// Estrutura de Hobby
+struct Hobby {
+  var nome: String
+  var freq: Int
+}
+
+// Estrutura de Dia
 struct day {
-    let nome: String
-    var hobList: [String] = []
-    
+  var nome: String
+  var hobbies: [String] = []
 }
 
-struct hobby {
-    let nomeHobby: String
-    let frequenciaHobby: Int
-}
-
+// Estrutura de Semana
 struct week {
-    let hobbies: [hobby]
-    var hobbiesQuantArray = [0,0,0,0,0,0,0]
-    var dias = [
-        day(nome: "domingo"),
-        day(nome: "segunda"),
-        day(nome: "terca"),
-        day(nome: "quarta"),
-        day(nome: "quinta"),
-        day(nome: "sexta"),
-        day(nome: "sabado")
-    ]
-    
+  var hobQuantArray = [0,0,0,0,0,0,0]
+  var dias = [
+      day(nome: "domingo"),
+      day(nome: "segunda"),
+      day(nome: "terca"),
+      day(nome: "quarta"),
+      day(nome: "quinta"),
+      day(nome: "sexta"),
+      day(nome: "sabado")
+  ]
 }
 
-//preencher structs tipo hobby definidas
-var listaHobbies : [hobby] = [ ]
+// Criar uma lista do tipo Hobby
+var listaHobbies: [Hobby] = []
+var semana = week()
 
+// Criar função para adicionar um hobby à lista
 func adicionarHobby(nome: String, frequencia: Int) {
-    let novoHobby = hobby(nomeHobby: nome, frequenciaHobby: frequencia)
-    listaHobbies.append(novoHobby)
+  let novoHobby = Hobby(nome: nome, freq: frequencia)
+  listaHobbies.append(novoHobby)
 }
 
-
+// Valores lidos do usuário
 adicionarHobby(nome: "Correr", frequencia:2)
 adicionarHobby(nome: "Andar", frequencia: 3)
+adicionarHobby(nome: "Nadar", frequencia: 2)
+adicionarHobby(nome: "ler", frequencia: 4)
+adicionarHobby(nome: "desenhar", frequencia: 5)
+adicionarHobby(nome: "matar", frequencia: 2)
 
-//se dia estiver entre dias com menos hobbies, preenche a posicao do dia com 1
+// Criar variável para receber valor de eventos
+var numEventos = 0
 
-var week1 = week(hobbies: listaHobbies)
-
-
-//a ideia é distribuir um hobby quantas vezes freq
-
-//preciso acessar lista hobbies, hobbies por dia, semana
-
-
-for i in 0..<week1.hobbies.count{
-    for j in 0..<week1.hobbies[i].frequenciaHobby{
-        var numMenor = week1.hobbiesQuantArray.min()
-        for k in 0..<week1.hobbiesQuantArray.count{
-            if(week1.hobbiesQuantArray[k] == numMenor){
-                week1.hobbiesQuantArray[k] += 1
-                week1.dias[j].hobList.append(week1.hobbies[i].nomeHobby)
-            }
-        }
-    }
-    
+// Olhar a quantidade de eventos no total
+for i in 0..<listaHobbies.count {
+  print(listaHobbies[i])
+  numEventos += listaHobbies[i].freq
 }
 
+//()checagem de mesa
+print("Quantidade de eventos: \(numEventos)")
 
+// Criar uma lista de strings que coloca n vezes determinado hobby
+// Correr correr andar andar andar nadar
+var listaEventos: [String] = []
 
-//for i in 0..<week1.hobbies.count{
-//    for j in 0..<week1.hobbies[i].frequenciaHobby{
-//        // Atribui o valor dos dias com menos hobbies a uma variável
-//        var numMenor = week1.hobbiesQuantArray.min()
-//
-//        if(week1.hobbiesQuantArray[i] == numMenor){
-//            week1.hobbiesQuantArray[j] += 1
-//            week1.dias[j].hobList.append(week1.hobbies[i].nomeHobby)
-//        }
-//    }
-//}
+//preencher lista de eventos
+for Hobby in listaHobbies {
+  for _ in 0..<Hobby.freq {
+    listaEventos.append(Hobby.nome)
+  }
+}
 
+listaEventos.shuffle()
 
+//()checagem de mesa
+print(listaEventos)
 
-print(week1)
-var preenche : [Int] = []
-var numeroDeHobbiesPreenchidos = 0
-
-
-
-print("(indices) a preencher :   \(preenche)")
-print("quantidade a preencher:   \(numeroDeHobbiesPreenchidos)")
-
-
-
-
-//VERSÃO "LEGADO"
-
-//var numeroDeHobbiesPorDia = [2,3,2,2,2,3,2]
-//print("Numero de hobbies:        \(numeroDeHobbiesPorDia)")
-//
-//se dia estiver entre dias com menos hobbies, preenche a posicao do dia com 1
-//var preenche : [Int] = []
-//var numeroDeHobbiesPreenchidos = 0
-//for i in 0..<numeroDeHobbiesPorDia.count{
-//    // Atribui o valor dos dias com menos hobbies a uma variável
-//    var numMenor = numeroDeHobbiesPorDia.min()
-//
-//    if(numeroDeHobbiesPorDia[i] == numMenor){
-//        preenche.append(i)
-//        numeroDeHobbiesPreenchidos += 1
-//
-//    }
-//}
-//
-//
-//print("preenche no dia:          \(preenche)")
-//print("quantidade a preencher:   \(numeroDeHobbiesPreenchidos)")
+//vamos dispor [Correr correr andar andar andar nadar] em uma struct semana]
+var randInds = [0,1,2,3,4,5,6]
+randInds.shuffle()
+for i in 0..<listaEventos.count{
+    for j in 0..<randInds.count{
+    if semana.hobQuantArray[j] == semana.hobQuantArray.min(){
+      if semana.dias[j].hobbies.contains(listaEventos[i]){
+        continue
+      }
+      else{
+        semana.dias[j].hobbies.append(listaEventos[i])
+        semana.hobQuantArray[j] += 1
+          break
+      }
+      
+      //colocar esse hobby no array de cada dia
+      
+      //append hobquants
+    }
+  }
+}
+print()
+print()
+print()
+for i in 0..<semana.hobQuantArray.count {
+    print("\(semana.dias[i].nome): \(semana.dias[i].hobbies)")
+}

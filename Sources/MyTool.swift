@@ -66,7 +66,6 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
     struct day {
         var nome: String
         var hobQuant: Int
-        
     }
     
     struct week {
