@@ -65,19 +65,19 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
     }
     struct day {
         var nome: String
-        var hobQuant: Int
+        var hobbies: [String] = []
     }
     
     struct week {
-        var hobbies: [String]
-        let dias = [
-            day(nome: "domingo", hobQuant: 0),
-            day(nome: "segunda", hobQuant: 0),
-            day(nome: "terca", hobQuant: 0),
-            day(nome: "quarta", hobQuant: 0),
-            day(nome: "quinta", hobQuant: 0),
-            day(nome: "sexta", hobQuant: 0),
-            day(nome: "sabado", hobQuant: 0)
+        var hobQuantArray = [0,0,0,0,0,0,0]
+        var dias = [
+            day(nome: "domingo"),
+            day(nome: "segunda"),
+            day(nome: "terca"),
+            day(nome: "quarta"),
+            day(nome: "quinta"),
+            day(nome: "sexta"),
+            day(nome: "sabado")
         ]
     }
     
@@ -106,6 +106,20 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
         @Option(name: [.customLong("add"), .customShort("a")], help: "Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por vircula u.e. '<hobby1>,<quant1>,<hobby2>,<quant2>'")
         var hobbiesString: String = ""
         
+        //Le oq for digitado no terminal até que seja digitado um número inteiro
+        func readInt() -> Int{
+            while true {
+                print("Digite a quantidade de semanas que voce quer gerar: ")
+                if var input = readLine(){
+                    if var number = Int(input){
+                        return number
+                    } else {
+                        continue
+                    }
+                }
+            }
+        }
+        
         //função responsável por separar uma string com inteiros e textos e transformar em um array de inteiros e um de Strings
         func separateItems(data: String) -> (strings: [String], numbers: [Int]) {
             var hobbies: [String] = []
@@ -114,23 +128,105 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
             let termArray = data.split(separator: ",") //"correr","1","andar",2"
                         
             for (i, term) in termArray.enumerated() {
-                if i%2 == 0 {
-                    hobbies.append(String(term))
-                } else {
-                    if let quantity = Int(term) {
-                        quants.append(quantity)
+                //Se for par, quer dizer que a quantidade de argumentos está ok
+                if termArray.count%2 == 0{
+                    
+                    //Se o argumento for par, será um hobby, se for impar é uma frequencia
+                    if i%2 == 0 {
+                        hobbies.append(String(term))
                     } else {
-                        print("Invalido, use <hobby>,<quant>,<hobby>,<quant> ...")
+                        if let quantity = Int(term) {
+                            
+                            //Impede a execução se a frequencia exceder 7
+                            if quantity <= 7 {
+                                quants.append(quantity)
+                            } else {
+                                print("Frequencia de cada hobby não pode exceder 7")
+                                Self.exit(withError: nil)
+                            }
+                            
+                        } else {
+                            print("Invalido, use <hobby>,<quant>,<hobby>,<quant> ...")
+                            Self.exit(withError: nil)
+                        }
                     }
+                } else {
+                    print("Invalido, use <hobby>,<quant>,<hobby>,<quant> ...")
+                    Self.exit(withError: nil)
                 }
             }
             
             return(strings: hobbies, numbers: quants)
         }
         
+        
+        // recebendo uma listade hobbies e uma lista das frequencias, retorna uma semana com os hobbies de cada dia preenchidos
+        func randomizeDays (hobbieList: [String], quants: [Int]) -> (week) {
+            
+            // Cria array de hobbies temporario
+            var tempHobbies: [hobby] = []
+            
+            // Preenche o Array com os dados enviados
+            for i in 0..<hobbieList.count {
+                let novoHobby = hobby(nomeHobby: hobbieList[i], freqHobby: quants[i])
+                tempHobbies.append(novoHobby)
+            }
+            
+            // Cria um array temporario apenas com os nomes dos hobbies, repetindo o nome na frequencia do hobby
+            var tempHobbiesNames: [String] = []
+            for hobby in tempHobbies {
+                for _ in 0..<hobby.freqHobby {
+                    tempHobbiesNames.append(hobby.nomeHobby)
+                }
+            }
+            
+            //Embaralha o array de nomes
+            tempHobbiesNames.shuffle()
+            
+            //Cria e randomiza um array com os indices de 0 a 6
+            var randInds = [0, 1, 2, 3, 4, 5, 6]
+            randInds.shuffle()
+            
+            //Cria uma semana que será o retorno
+            var returnWeek = week()
+            
+            //vai preenchendo sempre nos espaços com menos hobbies já preenchidos na semana, e aumenta a quantidade de hobbies de cada dia
+            for i in 0..<tempHobbiesNames.count {
+                for j in 0..<randInds.count
+                    where (returnWeek.hobQuantArray[j] == returnWeek.hobQuantArray.min()) {
+                    if returnWeek.dias[j].hobbies.contains(tempHobbiesNames[i]) {
+                        continue
+                    } else {
+                        returnWeek.dias[j].hobbies.append(tempHobbiesNames[i])
+                        returnWeek.hobQuantArray[j] += 1
+                        break
+                    }
+                }
+            }
+            return returnWeek
+        }
+            
         func run() {
             let (hobbieList, quants) = separateItems(data: hobbiesString)
-            let week1 = week(hobbies: hobbieList)
+            let week1 = randomizeDays(hobbieList: hobbieList, quants: quants)
+            var weekArray: [week] = []
+            
+            var numeroDeSemanas = readInt()
+            
+            for i in 0..<numeroDeSemanas {
+                print("----------- Semana \(i+1) -----------")
+                
+                weekArray.append(randomizeDays(hobbieList: hobbieList, quants: quants))
+                for j in 0..<weekArray[i].hobQuantArray.count {
+                    print("\(weekArray[i].dias[j].nome): \(weekArray[i].dias[j].hobbies)")
+                }
+                print()
+                
+            }
+            
+                
+                
+            
             
         }
         

@@ -86,10 +86,6 @@ for i in 0..<listaEventos.count{
         semana.hobQuantArray[j] += 1
           break
       }
-      
-      //colocar esse hobby no array de cada dia
-      
-      //append hobquants
     }
   }
 }
