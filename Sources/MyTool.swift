@@ -69,7 +69,7 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
     }
     
     struct week {
-        var hobQuantArray = [0,0,0,0,0,0,0]
+        var hobQuantArray = [0, 0, 0, 0, 0, 0, 0]
         var dias = [
             day(nome: "domingo"),
             day(nome: "segunda"),
@@ -183,7 +183,7 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
             //Embaralha o array de nomes
             tempHobbiesNames.shuffle()
             
-            //Cria e randomiza um array com os indices de 0 a 6
+            //Cria e randomiza um array com os indices de 0 a 6, para preencher cada dia em uma ordem diferente, assim quando a semana tiver quantidades de hobbies nao iguais em cada dia, cada geração vai gerar com uma quantidadde diferente para cada dia
             var randInds = [0, 1, 2, 3, 4, 5, 6]
             randInds.shuffle()
             
@@ -191,44 +191,117 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
             var returnWeek = week()
             
             //vai preenchendo sempre nos espaços com menos hobbies já preenchidos na semana, e aumenta a quantidade de hobbies de cada dia
-            for i in 0..<tempHobbiesNames.count {
-                for j in 0..<randInds.count
-                    where (returnWeek.hobQuantArray[j] == returnWeek.hobQuantArray.min()) {
-                    if returnWeek.dias[j].hobbies.contains(tempHobbiesNames[i]) {
-                        continue
-                    } else {
-                        returnWeek.dias[j].hobbies.append(tempHobbiesNames[i])
-                        returnWeek.hobQuantArray[j] += 1
-                        break
+            var soma = 0
+            while tempHobbiesNames.count > soma {
+                for i in 0..<tempHobbiesNames.count {
+                    
+                    for j in 0..<randInds.count where (returnWeek.hobQuantArray[j] == returnWeek.hobQuantArray.min()) {
+                        if returnWeek.dias[j].hobbies.contains(tempHobbiesNames[i]) {
+                            continue
+                        } else {
+                            returnWeek.dias[j].hobbies.append(tempHobbiesNames[i])
+                            returnWeek.hobQuantArray[j] += 1
+                            soma += 1
+                            break
+                        }
                     }
                 }
             }
             return returnWeek
         }
+        
+        func achaMaiorColuna(i: Int, dias: [day]) -> (String){
+
+            //ex:
+            //    hobbies[0] = ["Ler", "Programar"]
+            //    hobbies[1] = ["Correr", "Sol"]
+            // nesse caso, o nome maior hobby na primeira coluna é "Correr" e na segunda é "Programar"
+            var maiorHobby = ""
+            for hobby in dias {
+                if i <= hobby.hobbies.count-1 {
+                    if hobby.hobbies[i].count > maiorHobby.count {
+                        maiorHobby = hobby.hobbies[i]
+
+                    }
+                }
+            }
+            return maiorHobby
+        }
+
+        func printaArray(dias: [day], semana: Int) {
+            var numeroLinhas = 0
+            var maiorArray = 0
+            for dia in dias {
+                if dia.hobbies.count > maiorArray {
+                    maiorArray = dia.hobbies.count
+                }
+            }
+            //roda pelos dias
+            for dia in dias {
+                //gera um indice
+                var i = 0
+                //Printa nome do dia
+                var diaString = "\(dia.nome):"
+                diaString = diaString.padding(toLength: 10, withPad: " ", startingAt: 0)
+                print(diaString, terminator: "")
+
+                //roda pelo array de nomes do hobbies
+                for nome in dia.hobbies {
+                
+                    //Chamando a função que acha o maior hobby na coluna
+                    let maiorHobby = achaMaiorColuna(i: i, dias: dias)
+
+                    //Aqui printamos o array de nomes de hobbies, usando o Maior que achamos anteriormente e prints sem espaço para formatar de uma maneira apresentável
+                    var nomeString = String(nome)
+                    nomeString = nomeString.padding(toLength: maiorHobby.count + 2, withPad: " ", startingAt: 0)
+                    print(nomeString, terminator: "")
+
+              //Aqui printamos uma barra, para separar cada hobby, isso se não for o último hobby do dia
+                  if (i == dia.hobbies.count-1 && dia.hobbies.count > maiorArray-1) {
+                      break
+                  } else {
+                      var barra = "|"
+                      barra = barra.padding(toLength: 3, withPad: " ", startingAt: 0)
+                      print(barra, terminator: "")
+
+                  }
+                    i+=1
+                    numeroLinhas += maiorArray
+                }
+                print("")
+            }
+        }
+        
+        func printHobgen() {
+            var str = """
+            ██   ██  ██████  ██████  ██████  ██    ██  ██████  ███████ ███    ██
+            ██   ██ ██    ██ ██   ██ ██   ██  ██  ██  ██       ██      ████   ██
+            ███████ ██    ██ ██████  ██████    ████   ██   ███ █████   ██ ██  ██
+            ██   ██ ██    ██ ██   ██ ██   ██    ██    ██    ██ ██      ██  ██ ██
+            ██   ██  ██████  ██████  ██████     ██     ██████  ███████ ██   ████
             
+            """
+            
+            print (str)
+        }
+
         func run() {
             let (hobbieList, quants) = separateItems(data: hobbiesString)
-            let week1 = randomizeDays(hobbieList: hobbieList, quants: quants)
             var weekArray: [week] = []
             
-            var numeroDeSemanas = readInt()
+            let numeroDeSemanas = readInt()
             
+            printHobgen()
+            sleep(1)
             for i in 0..<numeroDeSemanas {
-                print("----------- Semana \(i+1) -----------")
-                
+                sleep(1)
+                print("Semana \(i+1)")
                 weekArray.append(randomizeDays(hobbieList: hobbieList, quants: quants))
-                for j in 0..<weekArray[i].hobQuantArray.count {
-                    print("\(weekArray[i].dias[j].nome): \(weekArray[i].dias[j].hobbies)")
-                }
+                print("--------------------------------------")
+                printaArray(dias: weekArray[i].dias, semana: i)
                 print()
                 
             }
-            
-                
-                
-            
-            
         }
-        
     }
 }
