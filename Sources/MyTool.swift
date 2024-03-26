@@ -7,37 +7,6 @@
 import ArgumentParser
 import Foundation
 
-//@main
-//struct MyTool: ParsableCommand {
-//    
-//    @Flag(help: "Include a count whith each repetition")
-//    var includeCounter = false
-//    
-//    @Argument(help: "the phrase to repeat")
-//    var phrase:String
-//    
-//    @Option(help:"the number of times to repeat")
-//    var count: Int
-//    
-//    
-//    mutating func run() throws {
-//        echo (phrase, count:count)
-//            }
-//    
-//    func echo (_ phrase:String, count:Int){
-//        if includeCounter{
-//            for i in 1...count{
-//                print("\(i):\(phrase)")
-//            }
-//        }else{
-//            for _ in 1...count{
-//                print("\(phrase)")
-//            }
-//        }
-//        
-//    }
-//}
-
 @main
 struct Hobgen: ParsableCommand {
     static var configuration = CommandConfiguration(
@@ -52,7 +21,7 @@ struct Hobgen: ParsableCommand {
                                                                                                                                         
 This tool is designed to sort a list of hobbies and generate a weekly schedule in a random order each time. We planned this project to be accessible for terminal and no-terminal users. When running the program. First time, the userwill enter a list of hobbies and the amount of times each hobby will be able to be executed in a week. After the first time, the user has to select between adding a new list entirely or sorting the current list
 """,
-    subcommands: [Add.self, AddMultiple.self]
+    subcommands: [H.self]
     )
     
     mutating func run() throws {
@@ -81,37 +50,21 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
         ]
     }
     
-    struct Add: ParsableCommand {
-        @Option(name: [.customLong("hobbies"), .customShort("h")], help: "Lista de Hobbies separados por virgula ','")
-        var hobbiesString: String = ""
+    struct H: ParsableCommand {
+        @Option(name: [.customLong("add"), .customShort("a")],
+            help:
+            """
+                Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por virgula u.e. "<hobby1>,<quant1>,<hobby2>,<quant2>"
+            """)
         
-        func run() {
-            
-            //Separando a String em um Array de Strings
-            let hobbiesArray = hobbiesString.components(separatedBy: ",")
-            
-            //Criando semana
-            let week = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
-            
-            //Fazendo a randomização do Array
-            var hobbiesArrayShuffled = hobbiesArray
-            hobbiesArrayShuffled.shuffle()
-            for i in 0..<week.count {
-                print("\(week[i]): \(hobbiesArrayShuffled[i])")
-            }
-        }
-    }
-    
-    struct AddMultiple: ParsableCommand {
-        @Option(name: [.customLong("add"), .customShort("a")], help: "Lista de hobbies e quantidade de vezes que esse hobby vai aparecer, separados por vircula u.e. '<hobby1>,<quant1>,<hobby2>,<quant2>'")
         var hobbiesString: String = ""
         
         //Le oq for digitado no terminal até que seja digitado um número inteiro
-        func readInt() -> Int{
+        func readInt(str: String) -> Int {
             while true {
-                print("Digite a quantidade de semanas que voce quer gerar: ")
-                if var input = readLine(){
-                    if var number = Int(input){
+                print(str)
+                if let input = readLine() {
+                    if let number = Int(input) {
                         return number
                     } else {
                         continue
@@ -129,7 +82,7 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
                         
             for (i, term) in termArray.enumerated() {
                 //Se for par, quer dizer que a quantidade de argumentos está ok
-                if termArray.count%2 == 0{
+                if termArray.count%2 == 0 {
                     
                     //Se o argumento for par, será um hobby, se for impar é uma frequencia
                     if i%2 == 0 {
@@ -158,7 +111,6 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
             
             return(strings: hobbies, numbers: quants)
         }
-        
         
         // recebendo uma listade hobbies e uma lista das frequencias, retorna uma semana com os hobbies de cada dia preenchidos
         func randomizeDays (hobbieList: [String], quants: [Int]) -> (week) {
@@ -194,7 +146,6 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
             var soma = 0
             while tempHobbiesNames.count > soma {
                 for i in 0..<tempHobbiesNames.count {
-                    
                     for j in 0..<randInds.count where (returnWeek.hobQuantArray[j] == returnWeek.hobQuantArray.min()) {
                         if returnWeek.dias[j].hobbies.contains(tempHobbiesNames[i]) {
                             continue
@@ -205,24 +156,26 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
                             break
                         }
                     }
+                    if tempHobbiesNames.count <= soma {
+                        break
+                    }
+                    
                 }
             }
             return returnWeek
         }
         
-        func achaMaiorColuna(i: Int, dias: [day]) -> (String){
+        func achaMaiorColuna(i: Int, dias: [day]) -> (String) {
 
             //ex:
             //    hobbies[0] = ["Ler", "Programar"]
             //    hobbies[1] = ["Correr", "Sol"]
             // nesse caso, o nome maior hobby na primeira coluna é "Correr" e na segunda é "Programar"
             var maiorHobby = ""
-            for hobby in dias {
-                if i <= hobby.hobbies.count-1 {
-                    if hobby.hobbies[i].count > maiorHobby.count {
-                        maiorHobby = hobby.hobbies[i]
+            for hobby in dias where i <= hobby.hobbies.count-1 {
+                if hobby.hobbies[i].count > maiorHobby.count {
+                    maiorHobby = hobby.hobbies[i]
 
-                    }
                 }
             }
             return maiorHobby
@@ -231,10 +184,9 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
         func printaArray(dias: [day], semana: Int) {
             var numeroLinhas = 0
             var maiorArray = 0
-            for dia in dias {
-                if dia.hobbies.count > maiorArray {
-                    maiorArray = dia.hobbies.count
-                }
+            for dia in dias where dia.hobbies.count > maiorArray {
+                maiorArray = dia.hobbies.count
+                
             }
             //roda pelos dias
             for dia in dias {
@@ -256,15 +208,15 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
                     nomeString = nomeString.padding(toLength: maiorHobby.count + 2, withPad: " ", startingAt: 0)
                     print(nomeString, terminator: "")
 
-              //Aqui printamos uma barra, para separar cada hobby, isso se não for o último hobby do dia
-                  if (i == dia.hobbies.count-1 && dia.hobbies.count > maiorArray-1) {
-                      break
-                  } else {
-                      var barra = "|"
-                      barra = barra.padding(toLength: 3, withPad: " ", startingAt: 0)
-                      print(barra, terminator: "")
+                    //Aqui printamos uma barra, para separar cada hobby, isso se não for o último hobby do dia
+                    if i == dia.hobbies.count-1 && dia.hobbies.count > maiorArray-1 {
+                        break
+                    } else {
+                        var barra = "|"
+                        barra = barra.padding(toLength: 3, withPad: " ", startingAt: 0)
+                        print(barra, terminator: "")
 
-                  }
+                    }
                     i+=1
                     numeroLinhas += maiorArray
                 }
@@ -273,7 +225,11 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
         }
         
         func printHobgen() {
-            var str = """
+            let str = """
+            
+            
+            
+            
             ██   ██  ██████  ██████  ██████  ██    ██  ██████  ███████ ███    ██
             ██   ██ ██    ██ ██   ██ ██   ██  ██  ██  ██       ██      ████   ██
             ███████ ██    ██ ██████  ██████    ████   ██   ███ █████   ██ ██  ██
@@ -282,25 +238,26 @@ This tool is designed to sort a list of hobbies and generate a weekly schedule i
             
             """
             
-            print (str)
+            print(str)
         }
 
         func run() {
             let (hobbieList, quants) = separateItems(data: hobbiesString)
             var weekArray: [week] = []
             
-            let numeroDeSemanas = readInt()
-            
             printHobgen()
+            let numeroDeSemanas = readInt(str: "Digite a quantidade de semanas que voce quer gerar: ")
+            
             sleep(1)
             for i in 0..<numeroDeSemanas {
                 sleep(1)
+                
+                print()
+
                 print("Semana \(i+1)")
                 weekArray.append(randomizeDays(hobbieList: hobbieList, quants: quants))
                 print("--------------------------------------")
                 printaArray(dias: weekArray[i].dias, semana: i)
-                print()
-                
             }
         }
     }
